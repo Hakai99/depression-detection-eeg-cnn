@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Depression Detection Using EEG{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero-eeg">
+    <div class="container">
+        <span class="eyebrow">19-Channel EEG &middot; Deep Learning Screening</span>
+        <h1>See what's beneath the signal.</h1>
+        <p class="lead mb-4">
+            Upload a resting-state EEG recording and get an instant screening signal for
+            Major Depressive Disorder, powered by a compact EEGNet-style neural network
+            trained on standard 10&ndash;20 system electrodes.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+            <a href="/predict" class="btn btn-signal btn-lg">Analyze an EEG Recording</a>
+            <a href="/about" class="btn btn-outline-eeg btn-lg">How It Works</a>
+        </div>
+
+        <div class="hero-trace-wrap">
+            <svg class="eeg-trace" viewBox="0 0 1000 120" xmlns="http://www.w3.org/2000/svg">
+                <path class="trace-dim" d="M0,60 L40,60 L55,20 L70,100 L85,60 L1000,60" />
+                <path class="trace-animate" d="M0,70 Q40,70 55,40 T90,70 Q120,90 140,50 T180,70 Q210,50 230,80 T270,60 Q300,40 320,70 T360,65 Q400,55 420,75 T460,60 L1000,62" />
+                <path class="trace-animate delay-1" d="M0,40 Q60,40 80,60 T130,35 Q160,20 190,50 T240,40 Q280,60 300,30 T350,45 L1000,42" />
+            </svg>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="py-5">
+    <div class="container py-4">
+        <div class="row justify-content-center text-center mb-5">
+            <div class="col-lg-7">
+                <h2 class="fw-bold mb-3">From recording to result in three steps</h2>
+                <p class="text-muted">
+                    The pipeline follows the same signal processing used in EEG-based
+                    depression research: filter, segment, classify.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="card-body p-4">
+                        <span class="channel-badge mb-3">STEP 1</span>
+                        <h4 class="fw-bold mt-3 mb-2">Upload</h4>
+                        <p class="text-muted mb-0">
+                            Provide a .edf recording covering at least 15 of the 19
+                            standard electrodes, sampled at 256&nbsp;Hz.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="card-body p-4">
+                        <span class="channel-badge mb-3">STEP 2</span>
+                        <h4 class="fw-bold mt-3 mb-2">Process</h4>
+                        <p class="text-muted mb-0">
+                            The signal is band-pass filtered (1&ndash;40&nbsp;Hz), normalized
+                            per channel, and split into 4-second overlapping windows.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <div class="card-body p-4">
+                        <span class="channel-badge mb-3">STEP 3</span>
+                        <h4 class="fw-bold mt-3 mb-2">Classify</h4>
+                        <p class="text-muted mb-0">
+                            A lightweight EEGNet-style CNN scores every window and
+                            returns an averaged confidence for Healthy vs. MDD.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DISCLAIMER STRIP -->
+<section class="py-4" style="background: rgba(230,83,60,0.06);">
+    <div class="container">
+        <p class="mb-0 text-center small" style="color: var(--slate-dark);">
+            <strong>Note:</strong> This is an academic prototype for a final year project.
+            It is not a certified diagnostic tool and should not replace professional
+            clinical assessment.
+        </p>
+    </div>
+</section>
+
+{% endblock %}

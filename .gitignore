@@ -1,0 +1,10 @@
+venv/
+venv310/
+__pycache__/
+*.pyc
+Depression Detection dataset/
+uploads/*
+!uploads/.gitkeep
+*.edf
+output.txt
+.env

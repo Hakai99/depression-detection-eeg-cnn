@@ -1,0 +1,36 @@
+# ============================================================================
+# requirements.txt - Depression Detection EEG (Python 3.12 compatible)
+# ============================================================================
+
+# Core Data Science & ML
+numpy>=1.24
+pandas>=2.0
+scipy>=1.11
+scikit-learn>=1.3
+
+# Deep Learning
+tensorflow>=2.13
+keras>=2.13
+
+# EEG Processing
+mne>=1.7
+pyedflib>=0.1.30
+
+# Web Framework
+Flask>=2.3
+Werkzeug>=2.3
+
+# Visualization
+matplotlib>=3.7
+seaborn>=0.12
+plotly>=5.16
+
+# Utilities
+python-dotenv>=1.0
+Pillow>=10.0
+requests>=2.31
+
+# ============================================================================
+# INSTALL with:
+# pip install -r requirements.txt
+# ============================================================================

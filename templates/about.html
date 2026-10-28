@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}About — Depression Detection Using EEG{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row justify-content-center text-center mb-5">
+        <div class="col-lg-8">
+            <span class="eyebrow" style="color: var(--signal-dim);">METHODOLOGY</span>
+            <h1 class="fw-bold mb-3">About this project</h1>
+            <p class="text-muted">
+                Depression Detection Using EEG is a B.Tech final year project exploring whether resting-state
+                EEG signals carry a detectable signature of Major Depressive Disorder (MDD),
+                using a compact convolutional neural network inspired by EEGNet.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4">Model architecture</h3>
+                    <ul class="list-unstyled text-muted mb-0">
+                        <li class="mb-2">&middot; Conv2D &rarr; BatchNorm &rarr; DepthwiseConv2D</li>
+                        <li class="mb-2">&middot; SeparableConv2D &rarr; BatchNorm &rarr; Pooling</li>
+                        <li class="mb-2">&middot; Dense (2-way softmax: Healthy / MDD)</li>
+                        <li class="mb-2">&middot; ~2,500 trainable parameters</li>
+                        <li>&middot; Input: 19 channels &times; 1024 time samples</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4">Signal processing</h3>
+                    <ul class="list-unstyled text-muted mb-0">
+                        <li class="mb-2">&middot; Band-pass filter: 1&ndash;40 Hz</li>
+                        <li class="mb-2">&middot; Per-channel z-score normalization</li>
+                        <li class="mb-2">&middot; 4-second windows, 50% overlap</li>
+                        <li class="mb-2">&middot; 1024 samples per window @ 256 Hz</li>
+                        <li>&middot; Predictions averaged across all windows</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-5">
+            <h3 class="fw-bold mb-4">Electrodes used (10&ndash;20 system)</h3>
+            <p class="text-muted mb-4">
+                At least 15 of these 19 standard channels must be present in an uploaded recording.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                {% for ch in ["Fp1","Fp2","F3","F4","F7","F8","Fz","C3","C4","Cz","P3","P4","Pz","O1","O2","T3","T4","T5","T6"] %}
+                <span class="channel-badge">{{ ch }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="alert mt-5" style="background: rgba(230,83,60,0.08); border: none; color: var(--slate-dark);">
+        <strong>Disclaimer:</strong> This tool is a research prototype built for academic
+        demonstration. It has not been clinically validated and must not be used to make
+        real diagnostic or treatment decisions. Please consult a qualified healthcare
+        professional for any mental health concerns.
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Results — Depression Detection Using EEG{% endblock %}
+
+{% block content %}
+
+<!-- HERO HEADER (persistent across all states) -->
+<section class="hero-eeg" style="padding: 3.5rem 0 2.5rem;">
+    <div class="container">
+        <span class="eyebrow">Analysis Result</span>
+        <h1 style="font-size: 2.3rem;">Screening result</h1>
+        <p class="lead mb-0 mono" style="font-size: 0.95rem;">
+            <span id="resFilename">—</span> &middot; <span id="resTimestamp">—</span>
+        </p>
+        <div class="hero-trace-wrap" style="margin-top: 1.75rem; padding-top: 1.5rem;">
+            <svg class="eeg-trace" viewBox="0 0 1000 60" xmlns="http://www.w3.org/2000/svg" style="max-height: 50px;">
+                <path class="trace-dim" d="M0,30 L1000,30" />
+                <path class="trace-animate" d="M0,35 Q30,35 40,20 T70,35 Q90,50 100,25 T130,35 L1000,32" />
+            </svg>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background: var(--paper);">
+    <div class="container">
+
+        <!-- Loading state -->
+        <div id="loadingState" class="text-center py-5">
+            <div class="spinner-border" role="status" style="color: var(--signal);">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-3">Loading your results...</p>
+        </div>
+
+        <!-- No-result state -->
+        <div id="noResultState" class="d-none text-center py-5">
+            <h2 class="fw-bold mb-3">No result found</h2>
+            <p class="text-muted mb-4">
+                We couldn't find a recent analysis. Please upload an EEG file first.
+            </p>
+            <a href="/predict" class="btn btn-signal-light btn-lg">Go to Upload Page</a>
+        </div>
+
+        <!-- Main result content -->
+        <div id="resultContent" class="d-none">
+
+            <!-- Full-width diagnosis band -->
+            <div id="diagnosisBand" class="diagnosis-band mb-4">
+                <svg class="eeg-trace diagnosis-band-trace" viewBox="0 0 1000 120" xmlns="http://www.w3.org/2000/svg">
+                    <path class="trace-animate" d="M0,60 Q60,60 80,30 T140,60 Q170,90 190,40 T250,60 Q290,30 320,70 T380,50 L1000,55" />
+                </svg>
+                <div class="diagnosis-band-content">
+                    <span id="resDiagnosisBadge" class="diagnosis-badge">Result</span>
+                    <h2 id="resDiagnosis" class="fw-bold mb-4">-</h2>
+
+                    <div class="meter-track mb-2" style="max-width: 420px; margin: 0 auto;">
+                        <div id="resConfidenceBar" class="meter-fill signal" style="width: 0%;"></div>
+                    </div>
+                    <p class="mono mb-0" style="opacity: 0.75;">
+                        Confidence: <strong id="resConfidence">-</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Probability Breakdown Card -->
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0 card-accent-top">
+                        <div class="card-body p-5">
+                            <h3 class="fw-bold mb-4">Probability breakdown</h3>
+
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Healthy</span>
+                                    <span id="resHealthyProb" class="mono">-</span>
+                                </div>
+                                <div class="meter-track">
+                                    <div id="resHealthyBar" class="meter-fill calm" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Major Depressive Disorder (MDD)</span>
+                                    <span id="resMddProb" class="mono">-</span>
+                                </div>
+                                <div class="meter-track">
+                                    <div id="resMddBar" class="meter-fill alert" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <p class="text-muted mb-0 small">
+                                Based on <strong id="resWindowCount" class="mono">-</strong> analyzed
+                                EEG windows (4-second segments).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-12">
+                    <div class="alert mt-2" style="background: rgba(230,83,60,0.08); border: none; color: var(--slate-dark);">
+                        <strong>Disclaimer:</strong> This tool is for academic/research
+                        demonstration purposes only and is not a substitute for professional
+                        medical diagnosis. Please consult a qualified healthcare provider for
+                        any mental health concerns.
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/predict" class="btn btn-signal-light btn btn-lg me-2">Analyze Another File</a>
+                <a href="/" class="btn btn-outline-secondary btn-lg">Back to Home</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loadingState = document.getElementById('loadingState');
+        const noResultState = document.getElementById('noResultState');
+        const resultContent = document.getElementById('resultContent');
+
+        const raw = sessionStorage.getItem('lastResult');
+
+        if (!raw) {
+            loadingState.classList.add('d-none');
+            noResultState.classList.remove('d-none');
+            return;
+        }
+
+        let result;
+        try {
+            result = JSON.parse(raw);
+        } catch (e) {
+            console.error('Failed to parse stored result:', e);
+            loadingState.classList.add('d-none');
+            noResultState.classList.remove('d-none');
+            return;
+        }
+
+        document.getElementById('resFilename').textContent = result.filename || '-';
+        document.getElementById('resTimestamp').textContent = result.timestamp || '-';
+        document.getElementById('resDiagnosis').textContent = result.diagnosis || '-';
+        document.getElementById('resConfidence').textContent = result.confidence_percent || '-';
+        document.getElementById('resWindowCount').textContent = result.total_windows ?? '-';
+
+        const healthyPct = (result.healthy_probability != null)
+            ? (result.healthy_probability * 100).toFixed(2) + '%' : '-';
+        const mddPct = (result.mdd_probability != null)
+            ? (result.mdd_probability * 100).toFixed(2) + '%' : '-';
+
+        document.getElementById('resHealthyProb').textContent = healthyPct;
+        document.getElementById('resMddProb').textContent = mddPct;
+
+        if (result.healthy_probability != null) {
+            document.getElementById('resHealthyBar').style.width = (result.healthy_probability * 100) + '%';
+        }
+        if (result.mdd_probability != null) {
+            document.getElementById('resMddBar').style.width = (result.mdd_probability * 100) + '%';
+        }
+
+        const badge = document.getElementById('resDiagnosisBadge');
+        const confBar = document.getElementById('resConfidenceBar');
+        const diagnosisBand = document.getElementById('diagnosisBand');
+
+        if (result.final_class === 1) {
+            diagnosisBand.classList.add('alert');
+            badge.textContent = 'MDD Indicated';
+            badge.classList.add('alert');
+            confBar.classList.remove('signal');
+            confBar.classList.add('alert');
+        } else if (result.final_class === 0) {
+            diagnosisBand.classList.add('calm');
+            badge.textContent = 'Healthy';
+            badge.classList.add('calm');
+            confBar.classList.remove('signal');
+            confBar.classList.add('calm');
+        }
+
+        if (result.confidence != null) {
+            confBar.style.width = (result.confidence * 100) + '%';
+        }
+
+        loadingState.classList.add('d-none');
+        resultContent.classList.remove('d-none');
+    });
+</script>
+{% endblock %}

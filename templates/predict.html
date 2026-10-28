@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze — Depression Detection Using EEG{% endblock %}
+
+{% block content %}
+
+<!-- HERO HEADER -->
+<section class="hero-eeg" style="padding: 3.5rem 0 2.5rem;">
+    <div class="container">
+        <span class="eyebrow">Upload &amp; Analyze</span>
+        <h1 style="font-size: 2.3rem;">Upload an EEG recording</h1>
+        <p class="lead mb-0">
+            Select a .edf file to run it through the full screening pipeline —
+            filtering, windowing, and classification.
+        </p>
+        <div class="hero-trace-wrap" style="margin-top: 1.75rem; padding-top: 1.5rem;">
+            <svg class="eeg-trace" viewBox="0 0 1000 60" xmlns="http://www.w3.org/2000/svg" style="max-height: 50px;">
+                <path class="trace-dim" d="M0,30 L1000,30" />
+                <path class="trace-animate" d="M0,35 Q30,35 40,20 T70,35 Q90,50 100,25 T130,35 L1000,32" />
+            </svg>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background: var(--paper);">
+    <div class="container">
+
+        <div class="row g-5">
+            <!-- Left Column - Upload Form -->
+            <div class="col-lg-6">
+                <div class="card shadow-lg border-0 card-accent-top">
+                    <div class="card-body p-5">
+
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="eegFile" class="form-label fw-bold">Select EEG File (.edf)</label>
+                                <div class="input-group input-group-lg">
+                                    <input
+                                        type="file"
+                                        class="form-control"
+                                        id="eegFile"
+                                        name="file"
+                                        accept=".edf"
+                                        required
+                                    >
+                                    <button
+                                        class="btn btn-outline-secondary"
+                                        type="button"
+                                        id="clearFileBtn"
+                                        title="Clear file selection"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Supported format: .edf &middot; Max size: 100MB
+                                </small>
+                            </div>
+
+                            <div id="fileInfo" class="alert alert-info d-none" role="alert">
+                                <div><strong>Selected File:</strong> <span id="fileName" class="mono"></span></div>
+                                <div><strong>File Size:</strong> <span id="fileSize" class="mono"></span></div>
+                            </div>
+
+                            <button type="submit" class="btn btn-signal-light btn btn-lg w-100 mb-3" id="uploadBtn">
+                                Upload &amp; Analyze
+                            </button>
+
+                            <div
+                                class="border-2 border-dashed rounded p-5 text-center"
+                                id="dropZone"
+                                style="cursor: pointer; border-color: rgba(13,19,33,0.15); background: rgba(13,19,33,0.02);"
+                            >
+                                <p class="mb-0 text-muted">Or drag &amp; drop your file here</p>
+                            </div>
+                        </form>
+
+                        <!-- Processing Status (Hidden) -->
+                        <div id="processingStatus" class="processing-panel d-none">
+                            <svg class="eeg-trace" viewBox="0 0 400 60" xmlns="http://www.w3.org/2000/svg" style="max-width: 260px; margin: 0 auto;">
+                                <path class="trace-animate" d="M0,30 Q20,30 28,15 T50,30 Q65,45 75,20 T100,30 Q115,15 125,40 T150,25 L400,28" />
+                            </svg>
+                            <p class="status-text" id="statusText">Uploading and processing your EEG file...</p>
+                            <div class="eeg-progress-track">
+                                <div class="eeg-progress-fill" id="progressBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Error Alert (Hidden) -->
+                        <div id="errorAlert" class="alert alert-danger d-none mt-4" role="alert">
+                            <h5 class="alert-heading">Error</h5>
+                            <p id="errorMessage" class="mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Instructions & Info -->
+            <div class="col-lg-6">
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-body p-5">
+                        <h3 class="fw-bold mb-4">Requirements</h3>
+                        <ul class="list-unstyled text-muted mb-0">
+                            <li class="mb-2">&middot; Format: .edf (European Data Format)</li>
+                            <li class="mb-2">&middot; Channels: at least 15 of 19 standard electrodes</li>
+                            <li class="mb-2">&middot; Duration: at least 4 seconds</li>
+                            <li class="mb-2">&middot; Sampling rate: 256&nbsp;Hz (handled automatically)</li>
+                            <li>&middot; Not supported: .csv, .txt, .xlsx</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <h3 class="fw-bold mb-4">Electrodes recognized</h3>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for ch in ["Fp1","Fp2","F3","F4","F7","F8","Fz","C3","C4","Cz","P3","P4","Pz","O1","O2","T3","T4","T5","T6"] %}
+                            <span class="channel-badge secondary">{{ ch }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // File upload handling
+    const uploadForm = document.getElementById('uploadForm');
+    const eegFile = document.getElementById('eegFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const clearFileBtn = document.getElementById('clearFileBtn');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const processingStatus = document.getElementById('processingStatus');
+    const statusText = document.getElementById('statusText');
+    const progressBar = document.getElementById('progressBar');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    const dropZone = document.getElementById('dropZone');
+
+    eegFile.addEventListener('change', function(e) {
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            fileName.textContent = file.name;
+            fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            fileInfo.classList.remove('d-none');
+            errorAlert.classList.add('d-none');
+        }
+    });
+
+    clearFileBtn.addEventListener('click', function() {
+        eegFile.value = '';
+        fileInfo.classList.add('d-none');
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#33D6C0';
+        dropZone.style.backgroundColor = 'rgba(51,214,192,0.06)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = 'rgba(13,19,33,0.15)';
+        dropZone.style.backgroundColor = 'rgba(13,19,33,0.02)';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(13,19,33,0.15)';
+        dropZone.style.backgroundColor = 'rgba(13,19,33,0.02)';
+
+        if (e.dataTransfer.files.length > 0) {
+            eegFile.files = e.dataTransfer.files;
+            const event = new Event('change', { bubbles: true });
+            eegFile.dispatchEvent(event);
+        }
+    });
+
+    uploadForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (eegFile.files.length === 0) {
+            showError('Please select a file first');
+            return;
+        }
+
+        const file = eegFile.files[0];
+
+        if (!file.name.endsWith('.edf')) {
+            showError('Please select a .edf format file');
+            return;
+        }
+
+        uploadForm.style.display = 'none';
+        processingStatus.classList.remove('d-none');
+        errorAlert.classList.add('d-none');
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            statusText.textContent = 'Uploading file...';
+            progressBar.style.width = '25%';
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            progressBar.style.width = '50%';
+            statusText.textContent = 'Processing EEG signal...';
+
+            const result = await response.json();
+
+            progressBar.style.width = '75%';
+
+            if (result.status === 'success') {
+                statusText.textContent = 'Processing complete';
+                progressBar.style.width = '100%';
+
+                sessionStorage.setItem('lastResult', JSON.stringify(result));
+
+                setTimeout(() => {
+                    window.location.href = '/result';
+                }, 1000);
+            } else {
+                showError(result.error || 'Unknown error occurred');
+                resetForm();
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            showError('Failed to upload file: ' + error.message);
+            resetForm();
+        }
+    });
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorAlert.classList.remove('d-none');
+        processingStatus.classList.add('d-none');
+        uploadForm.style.display = 'block';
+    }
+
+    function resetForm() {
+        uploadForm.style.display = 'block';
+        processingStatus.classList.add('d-none');
+        progressBar.style.width = '0%';
+        eegFile.value = '';
+        fileInfo.classList.add('d-none');
+    }
+</script>
+{% endblock %}

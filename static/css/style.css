@@ -1,0 +1,398 @@
+/* ============================================================================
+   Depression Detection EEG — Design System
+   Signature element: the EEG waveform trace, used as a recurring visual
+   thread (hero background, loading state, confidence meter).
+============================================================================ */
+
+:root {
+  --ink: #0D1321;
+  --ink-soft: #16203A;
+  --paper: #F5F6FA;
+  --paper-card: #FFFFFF;
+  --signal: #33D6C0;
+  --signal-dim: #1B8F82;
+  --signal-glow: rgba(51, 214, 192, 0.35);
+  --calm: #4CAF7D;
+  --alert: #E6533C;
+  --slate: #8A93A8;
+  --slate-dark: #4A5268;
+
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Consolas', monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+h1, h2, h3, h4, h5, .display-5, .card-title {
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.01em;
+}
+
+.mono, #resFilename, #resTimestamp, #resWindowCount,
+#resHealthyProb, #resMddProb, #resConfidence {
+  font-family: var(--font-mono);
+}
+
+/* ============================================================================
+   NAVBAR
+============================================================================ */
+.navbar-eeg {
+  background: var(--ink);
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.navbar-eeg .navbar-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--paper) !important;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.navbar-eeg .navbar-brand .brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 10px var(--signal-glow);
+}
+
+.navbar-eeg .nav-link {
+  color: rgba(245,246,250,0.72) !important;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  transition: color 0.15s ease;
+}
+
+.navbar-eeg .nav-link:hover,
+.navbar-eeg .nav-link.active {
+  color: var(--signal) !important;
+}
+
+/* ============================================================================
+   SIGNATURE: EEG WAVEFORM TRACE (used in hero + loading state)
+============================================================================ */
+.eeg-trace {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.eeg-trace path {
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+.eeg-trace path.trace-dim {
+  stroke: var(--slate-dark);
+  opacity: 0.5;
+}
+
+.eeg-trace .trace-animate {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: draw-trace 3.2s ease-in-out infinite;
+}
+
+.eeg-trace .trace-animate.delay-1 { animation-delay: 0.3s; }
+.eeg-trace .trace-animate.delay-2 { animation-delay: 0.6s; }
+
+@keyframes draw-trace {
+  0%   { stroke-dashoffset: 1400; }
+  50%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -1400; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eeg-trace .trace-animate { animation: none; stroke-dashoffset: 0; }
+}
+
+/* ============================================================================
+   HERO
+============================================================================ */
+.hero-eeg {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+  padding: 5.5rem 0 4.5rem;
+}
+
+.hero-eeg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 30%, var(--signal-glow), transparent 55%);
+  pointer-events: none;
+}
+
+.hero-eeg .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.hero-eeg h1 {
+  color: var(--paper);
+  font-size: 3rem;
+  font-weight: 700;
+  max-width: 620px;
+  line-height: 1.12;
+}
+
+.hero-eeg p.lead {
+  color: rgba(245,246,250,0.7);
+  max-width: 560px;
+  font-size: 1.1rem;
+}
+
+.hero-trace-wrap {
+  position: relative;
+  z-index: 1;
+  margin-top: 2.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 2rem;
+}
+
+/* ============================================================================
+   BUTTONS
+============================================================================ */
+.btn-signal {
+  background: var(--signal);
+  border: none;
+  color: var(--ink);
+  font-weight: 600;
+  padding: 0.75rem 1.6rem;
+  border-radius: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn-signal:hover {
+  background: var(--signal-dim);
+  color: var(--paper);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px var(--signal-glow);
+}
+
+.btn-outline-eeg {
+  border: 1.5px solid rgba(245,246,250,0.25);
+  color: var(--paper);
+  font-weight: 500;
+  padding: 0.75rem 1.6rem;
+  border-radius: 8px;
+  background: transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-outline-eeg:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+/* Buttons used on light sections (predict/result/about pages) */
+.btn-primary.btn-signal-light {
+  background: var(--ink);
+  border: none;
+  color: var(--paper);
+  font-weight: 600;
+  border-radius: 8px;
+}
+.btn-primary.btn-signal-light:hover {
+  background: var(--signal-dim);
+}
+
+/* ============================================================================
+   CARDS
+============================================================================ */
+.card {
+  border-radius: 14px !important;
+  border: 1px solid rgba(13,19,33,0.06) !important;
+}
+
+.card.shadow-lg {
+  box-shadow: 0 12px 32px rgba(13,19,33,0.08) !important;
+}
+
+.card-accent-top {
+  border-top: 3px solid var(--signal) !important;
+}
+
+/* ============================================================================
+   CHANNEL BADGES (about / predict pages)
+============================================================================ */
+.channel-badge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--signal);
+  display: inline-block;
+}
+
+.channel-badge.secondary {
+  background: rgba(13,19,33,0.06);
+  color: var(--slate-dark);
+}
+
+/* ============================================================================
+   PROCESSING / LOADING STATE
+============================================================================ */
+.processing-panel {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.processing-panel .status-text {
+  font-family: var(--font-mono);
+  color: var(--slate-dark);
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+.eeg-progress-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(13,19,33,0.08);
+  overflow: hidden;
+  margin-top: 1.25rem;
+}
+
+.eeg-progress-fill {
+  height: 100%;
+  background: var(--signal);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* ============================================================================
+   RESULT PAGE — OSCILLOSCOPE-STYLE METER
+============================================================================ */
+.meter-track {
+  height: 14px;
+  border-radius: 7px;
+  background: rgba(13,19,33,0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 7px;
+  transition: width 0.6s ease;
+}
+
+.meter-fill.calm { background: var(--calm); }
+.meter-fill.alert { background: var(--alert); }
+.meter-fill.signal { background: var(--signal); }
+
+.diagnosis-panel {
+  border-radius: 16px;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.diagnosis-badge {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.diagnosis-badge.calm { background: rgba(76,175,125,0.12); color: var(--calm); }
+.diagnosis-badge.alert { background: rgba(230,83,60,0.12); color: var(--alert); }
+
+/* Full-width diagnosis band on the result page */
+.diagnosis-band {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3.5rem 2rem;
+  text-align: center;
+}
+
+.diagnosis-band-trace {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+.diagnosis-band-content {
+  position: relative;
+  z-index: 1;
+}
+
+.diagnosis-band-content h2 {
+  color: var(--paper);
+  font-size: 2.4rem;
+}
+
+.diagnosis-band.calm {
+  background: linear-gradient(135deg, #0D1321 0%, #103828 100%);
+}
+.diagnosis-band.calm .eeg-trace path { stroke: var(--calm); }
+.diagnosis-band.calm .diagnosis-badge { background: rgba(76,175,125,0.16); color: var(--calm); }
+
+.diagnosis-band.alert {
+  background: linear-gradient(135deg, #0D1321 0%, #3A1712 100%);
+}
+.diagnosis-band.alert .eeg-trace path { stroke: var(--alert); }
+.diagnosis-band.alert .diagnosis-badge { background: rgba(230,83,60,0.18); color: var(--alert); }
+
+/* ============================================================================
+   FOOTER
+============================================================================ */
+.footer-eeg {
+  background: var(--ink);
+  color: rgba(245,246,250,0.5);
+  padding: 2rem 0;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.footer-eeg a {
+  color: var(--slate);
+  text-decoration: none;
+}
+
+.footer-eeg a:hover {
+  color: var(--signal);
+}
+
+/* ============================================================================
+   RESPONSIVE
+============================================================================ */
+@media (max-width: 768px) {
+  .hero-eeg h1 { font-size: 2.1rem; }
+  .hero-eeg { padding: 3.5rem 0 3rem; }
+}
+
+/* Keyboard focus visibility */
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
