@@ -17,13 +17,14 @@ An end-to-end EEG-based screening tool that classifies a resting-state EEG recor
 
 - [Overview](#overview)
 - [Features](#features)
+- [Dataset](#dataset)
 - [How It Works](#how-it-works)
 - [Model Architecture](#model-architecture)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [Dataset](#dataset)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
 - [Results](#results)
 - [Limitations](#limitations)
 - [Future Work](#future-work)
@@ -56,9 +57,11 @@ This project asks a simple question: can a lightweight CNN, working on standardi
 **Task:** Resting-state EEG (eyes closed)  
 **Classes:** Healthy Control (HC) vs Major Depressive Disorder (MDD)  
 
-> Dataset is not included in this repository due to file size.  
-> Download directly from the Figshare link above and place the `.edf` files inside a `dataset/` folder before running preprocessing.
-
+> The dataset is **not** included in this repository due to file size and data-sharing terms.  
+> Download it from the Figshare link above and follow its license.
+>
+> - **To just try the app:** download any one `.edf` file from the dataset and upload it in the web interface. No dataset folder is needed.
+> - **To retrain or re-run preprocessing:** place the `.edf` files inside a `dataset/` folder in the project root.
 
 ## How It Works
 
@@ -137,48 +140,49 @@ Based on: Lawhern et al., *EEGNet: A compact convolutional neural network for EE
 └── uploads/                    # Runtime uploads (not tracked)
 ```
 
-## Dataset
-
-<!-- TODO: fill this in. Examiners and readers will look for it first. -->
-
-- **Name:** [DATASET NAME]
-- **Source:** [LINK]
-- **Subjects:** [N] Healthy Controls, [N] MDD patients
-- **Format:** EDF, resting-state, [recording length], 256 Hz
-- **Channels:** 19 (10-20 system)
-
-The dataset is **not** included in this repository. Download it from the source above and place the files in `Depression Detection dataset/` (or update the path in your code). Please follow the dataset's license and terms of use.
-
 ## Installation
 
-**Requirements:** Python 3.10 and `pip`.
+### Prerequisites
+
+- [Git](https://git-scm.com/downloads)
+- [Python 3.10](https://www.python.org/downloads/) (TensorFlow 2.20 may not install on other versions)
+- A 19-channel `.edf` EEG file to test with (see [Dataset](#dataset))
+
+Check your Python version first:
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
-
-# 2. Create and activate a virtual environment
-python -m venv venv
-# Windows
-.\venv\Scripts\activate
-# macOS / Linux
-source venv/bin/activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Check the Python version
 python --version   # expected: Python 3.10.x
 ```
 
-## Usage
+### Windows
 
 ```bash
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
 python app.py
 ```
 
-Open **http://127.0.0.1:5000** in your browser, then:
+If `python` is not version 3.10, create the environment with `py -3.10 -m venv venv` instead.
+
+### macOS / Linux
+
+```bash
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
+python3.10 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+Replace `<your-username>` and `<repo-name>` with the real GitHub username and repository name.
+
+## Usage
+
+After running `python app.py`, open **http://127.0.0.1:5000** in your browser, then:
 
 1. Click **Analyze an EEG Recording**.
 2. Choose a `.edf` file (or drag and drop it).
@@ -186,6 +190,30 @@ Open **http://127.0.0.1:5000** in your browser, then:
 4. Read the predicted class, confidence and probability breakdown.
 
 **Input requirements:** `.edf` format, at least 15 of the 19 standard electrodes, at least 4 seconds of data. The sampling rate is handled automatically.
+
+**Next time:** you only need to activate the environment and start the app:
+
+```bash
+# Windows
+.\venv\Scripts\activate
+python app.py
+
+# macOS / Linux
+source venv/bin/activate
+python app.py
+```
+
+Press `Ctrl + C` in the terminal to stop the server.
+
+## Troubleshooting
+
+| Problem | Likely cause | Fix |
+| --- | --- | --- |
+| `pip install` fails on TensorFlow | Unsupported Python version | Use Python 3.10 |
+| `ModuleNotFoundError` | Virtual environment not activated, or install incomplete | Activate `venv`, then run `pip install -r requirements.txt` again |
+| Model file not found | Running from the wrong folder | Run `python app.py` from the project root |
+| Upload error or file rejected | Not a valid `.edf`, fewer than 15 of the 19 channels, or under 4 seconds | Use a 19-channel `.edf` recording of at least 4 seconds |
+| Port 5000 already in use | Another app is using it | Close the other app, or change the port in `app.py` |
 
 ## Results
 
@@ -222,7 +250,7 @@ These figures come from our project evaluation and are **indicative, not definit
 
 ## Authors
 
-- **Dev Kumar Lahkar** 
+- **Dev Kumar Lahkar**
 
 ## Acknowledgements
 
