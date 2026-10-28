@@ -48,6 +48,18 @@ This project asks a simple question: can a lightweight CNN, working on standardi
 - Result page with predicted class, confidence bar and probability breakdown
 - Runs fully locally; uploaded recordings are not sent to any external server
 
+## Dataset
+
+**Source:** [Raw 19-Channel EEG Data — Figshare](https://figshare.com/articles/Raw_19_channel_EEG_Data/1601695)  
+**Channels:** 19 (standard 10-20 system: Fp1, F3, C3, P3, O1, F7, T3, T5, Fz, Fp2, F4, C4, P4, O2, F8, T4, T6, Cz, Pz)  
+**Format:** EDF  
+**Task:** Resting-state EEG (eyes closed)  
+**Classes:** Healthy Control (HC) vs Major Depressive Disorder (MDD)  
+
+> Dataset is not included in this repository due to file size.  
+> Download directly from the Figshare link above and place the `.edf` files inside a `dataset/` folder before running preprocessing.
+
+
 ## How It Works
 
 ```
