@@ -49,14 +49,6 @@ This project asks a simple question: can a lightweight CNN, working on standardi
 - Result page with predicted class, confidence bar and probability breakdown
 - Runs fully locally; uploaded recordings are not sent to any external server
 
-## Demo
-
-<!-- Replace these with your own screenshots. Put images in a docs/ or static/ folder. -->
-
-| Home | Analyze | Result |
-| --- | --- | --- |
-| ![Home](docs/home.png) | ![Analyze](docs/analyze.png) | ![Result](docs/result.png) |
-
 ## How It Works
 
 ```
@@ -219,12 +211,7 @@ These figures come from our project evaluation and are **indicative, not definit
 
 ## Authors
 
-- **Arnab Pratim Kashyap** (CS-BTA24-36)
-- **Sania Parvin** (CS-BTA24-16)
-
-**Guide:** Pranjit Sir, Department of Computer Science and Engineering
-**Institution:** Birangana Sati Sadhani Rajyik Vishwavidyalaya, Golaghat, Assam
-B.Tech in Computer Science and Engineering (AI & ML), 2025-2026
+- **Dev Kumar Lahkar** 
 
 ## Acknowledgements
 
