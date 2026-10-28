@@ -157,8 +157,8 @@ python --version   # expected: Python 3.10.x
 ### Windows
 
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+git clone https://github.com/Hakai99/depression-detection-eeg-cnn.git
+cd depression-detection-eeg-cnn
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
@@ -170,15 +170,13 @@ If `python` is not version 3.10, create the environment with `py -3.10 -m venv v
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+git clone https://github.com/Hakai99/depression-detection-eeg-cnn.git
+cd depression-detection-eeg-cnn
 python3.10 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python app.py
 ```
-
-Replace `<your-username>` and `<repo-name>` with the real GitHub username and repository name.
 
 ## Usage
 
