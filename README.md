@@ -17,7 +17,6 @@ An end-to-end EEG-based screening tool that classifies a resting-state EEG recor
 
 - [Overview](#overview)
 - [Features](#features)
-- [Demo](#demo)
 - [How It Works](#how-it-works)
 - [Model Architecture](#model-architecture)
 - [Tech Stack](#tech-stack)
