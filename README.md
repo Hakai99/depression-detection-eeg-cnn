@@ -59,7 +59,7 @@ This project asks a simple question: can a lightweight CNN, working on standardi
 
 > The dataset is **not** included in this repository due to file size and data-sharing terms.  
 > Download it from the Figshare link above and follow its license.
->
+>  I have uploaded a subset from the Dataset of 5 test subject in the repo
 > - **To just try the app:** download any one `.edf` file from the dataset and upload it in the web interface. No dataset folder is needed.
 > - **To retrain or re-run preprocessing:** place the `.edf` files inside a `dataset/` folder in the project root.
 
